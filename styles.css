@@ -78,6 +78,11 @@ img { display: block; }
   font-size: 12px; letter-spacing: 0.34em; text-transform: uppercase;
   color: #B0A89B; font-weight: 400; margin-top: 30px;
 }
+.mn-sanskrit {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  letter-spacing: normal; text-transform: none;
+  font-size: 15px; color: #9B2A18; vertical-align: -1px;
+}
 
 /* Catálogo */
 .mn-content { padding-top: 0; padding-bottom: 0; }

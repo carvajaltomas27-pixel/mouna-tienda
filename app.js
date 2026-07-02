@@ -56,7 +56,8 @@ const SECTIONS = [
 ];
 
 /* --- Utilidades --- */
-const FALLBACK_IMG = 'assets/mouna-logo.png';
+// Imagen para productos sin foto propia: tarjeta de marca MOUNA (no el logo suelto).
+const FALLBACK_IMG = 'assets/images/mouna-generic.png';
 const WA_BASE = 'https://wa.me/549' + PHONE.replace(/\D/g, '');
 const money = (n) => '$' + n.toLocaleString('es-AR');
 const waLink = (text) => WA_BASE + '?text=' + encodeURIComponent(text);
@@ -132,12 +133,13 @@ function renderCatalog() {
       <div class="mn-grid">
         ${s.items.map((p) => {
           const src = p.img || FALLBACK_IMG;
-          const cls = p.img ? (p.fit === 'contain' ? ' class="fit-contain"' : '') : ' class="is-fallback"';
+          // Fotos reales llenan el recuadro (cover); tarjetas de marca y placeholder se ven enteras (contain).
+          const cls = (p.img && p.fit !== 'contain') ? '' : ' class="fit-contain"';
           return `
           <article class="mn-card">
             <div class="mn-card-img">
               <img src="${src}"${cls} alt="${esc(p.name)}" loading="lazy"
-                   onerror="this.onerror=null;this.src='${FALLBACK_IMG}';this.className='is-fallback';">
+                   onerror="this.onerror=null;this.src='${FALLBACK_IMG}';this.className='fit-contain';">
             </div>
             <h3>${esc(p.name)}</h3>
             <p class="mn-card-desc">${esc(p.desc)}</p>

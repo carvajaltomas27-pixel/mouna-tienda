@@ -10,16 +10,18 @@ const PHONE = '1167183887';
 const PHONE_DISPLAY = '11 6718 3887';
 
 /* --- Catálogo (editable: precios en pesos argentinos) ---
-   img: ruta a la foto del producto, o '' para usar el logo como fallback. */
+   img: ruta a la foto del producto, o '' para usar el logo como fallback.
+   fit: 'cover' para FOTOS reales (llenan el recuadro) · 'contain' para
+        TARJETAS gráficas de marca (se ven enteras, sin recortar el marco). */
 const SECTIONS = [
   {
     id: 'infusiones',
     label: 'Infusiones & Bebidas',
     note: 'Para despertar, limpiar y acompañar el día.',
     items: [
-      { name: 'Tesoro', desc: 'Yerba mate con hierbas y magia. Energizante y desintoxicante.', price: 20000, img: 'assets/images/tesoro.png' },
-      { name: 'Pancha Kofi', desc: 'Flecha de café. Granos de Brasil y especias indias.', price: 30000, img: 'assets/images/pancha-kofi.png' },
-      { name: 'Kefir', desc: 'Probiótico. Mejora la digestión y la absorción de nutrientes.', price: 15000, img: 'assets/images/kefir.png' },
+      { name: 'Tesoro', desc: 'Yerba mate con hierbas y magia. Energizante y desintoxicante.', price: 20000, img: 'assets/images/mouna-generic.png', fit: 'contain' },
+      { name: 'Pancha Kofi', desc: 'Flecha de café. Granos de Brasil y especias indias.', price: 30000, img: 'assets/images/pancha-kofi.png', fit: 'contain' },
+      { name: 'Kefir', desc: 'Probiótico. Mejora la digestión y la absorción de nutrientes.', price: 15000, img: 'assets/images/kefir.png', fit: 'cover' },
       { name: 'Soham Té', desc: 'Jengibre, hinojo y magia.', price: 10000, img: '' },
       { name: 'Ginger Shots', desc: 'Jengibre, cúrcuma, pimienta y limón.', price: 10000, img: '' },
       { name: 'Jaman Shot', desc: 'Hibiscus, chía, sal marina, naranja y limón.', price: 8000, img: '' },
@@ -34,7 +36,7 @@ const SECTIONS = [
       { name: 'Miel Pura', desc: '100% natural.', price: 12000, img: '' },
       { name: 'Crackers', desc: 'Harina de almendras, lino, chía, sésamo y magia. Dulces y saladas.', price: 12000, img: '' },
       { name: 'Trufas', desc: 'Frutos húmedos y secos, chocolate y magia. Por tres.', price: 12000, img: '' },
-      { name: 'Churna', desc: 'Curry ayurvédico. Balancea los seis sabores.', price: 20000, img: 'assets/images/churna.png' },
+      { name: 'Churna', desc: 'Curry ayurvédico. Balancea los seis sabores.', price: 20000, img: 'assets/images/churna.png', fit: 'contain' },
       { name: 'Mix de Semillas', desc: 'Mezcla de semillas seleccionadas.', price: 8000, img: '' },
       { name: 'Humus', desc: 'Garbanzo, zanahoria o berenjena.', price: 8000, img: '' },
     ],
@@ -44,11 +46,11 @@ const SECTIONS = [
     label: 'Aromas & Ritual',
     note: 'Aquietar los sentidos y habitar la pausa.',
     items: [
-      { name: 'Noni Noni', desc: 'Almohadillas de descanso para párpados. Lavanda y lino.', price: 20000, img: 'assets/images/noni-noni.png' },
-      { name: 'Elixires', desc: 'Aceites esenciales para los siete chakras principales.', price: 30000, img: 'assets/images/elixires.png' },
+      { name: 'Noni Noni', desc: 'Almohadillas de descanso para párpados. Lavanda y lino.', price: 20000, img: 'assets/images/noni-noni.png', fit: 'contain' },
+      { name: 'Elixires', desc: 'Aceites esenciales para los siete chakras principales.', price: 30000, img: 'assets/images/elixires.png', fit: 'cover' },
       { name: 'Aceites Esenciales', desc: 'Un solo aroma, puro.', price: 30000, img: '' },
-      { name: 'Chuf Chuf', desc: 'Aromatiza ambientes y ropa.', price: 12000, img: 'assets/images/chuf-chuf.png' },
-      { name: 'Sucundum', desc: 'Solución granulada para axilas. Aroma lavanda.', price: 10000, img: 'assets/images/sucundum.png' },
+      { name: 'Chuf Chuf', desc: 'Aromatiza ambientes y ropa.', price: 12000, img: 'assets/images/chuf-chuf.png', fit: 'contain' },
+      { name: 'Sucundum', desc: 'Solución granulada para axilas. Aroma lavanda.', price: 10000, img: 'assets/images/sucundum.png', fit: 'contain' },
     ],
   },
 ];
@@ -130,7 +132,7 @@ function renderCatalog() {
       <div class="mn-grid">
         ${s.items.map((p) => {
           const src = p.img || FALLBACK_IMG;
-          const cls = p.img ? '' : ' class="is-fallback"';
+          const cls = p.img ? (p.fit === 'contain' ? ' class="fit-contain"' : '') : ' class="is-fallback"';
           return `
           <article class="mn-card">
             <div class="mn-card-img">

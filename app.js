@@ -17,6 +17,7 @@ const SECTIONS = [
   {
     id: 'infusiones',
     label: 'Infusiones & Bebidas',
+    short: 'Infusiones',
     note: 'Para despertar, limpiar y acompañar el día.',
     items: [
       { name: 'Tesoro', desc: 'Yerba mate con hierbas y magia. Energizante y desintoxicante.', price: 20000, img: 'assets/images/mouna-generic.png', fit: 'contain' },
@@ -30,6 +31,7 @@ const SECTIONS = [
   {
     id: 'despensa',
     label: 'Despensa',
+    short: 'Despensa',
     note: 'Nutrir el cuerpo con lo simple y verdadero.',
     items: [
       { name: 'Ghee', desc: 'Manteca clarificada. Vitaminas y antioxidantes, sin grasa.', price: 15000, img: '' },
@@ -44,6 +46,7 @@ const SECTIONS = [
   {
     id: 'aromas',
     label: 'Aromas & Ritual',
+    short: 'Aromas',
     note: 'Aquietar los sentidos y habitar la pausa.',
     items: [
       { name: 'Noni Noni', desc: 'Almohadillas de descanso para párpados. Lavanda y lino.', price: 20000, img: 'assets/images/noni-noni.png', fit: 'contain' },
@@ -217,11 +220,51 @@ function wireStaticLinks() {
   footerWa.textContent = 'WhatsApp · ' + PHONE_DISPLAY;
 }
 
+/* --- Navegación de categorías móvil ---
+   Barra que aparece al scrollear el catálogo y resalta la categoría actual. */
+function initMobileNav() {
+  const catbar = document.getElementById('catbar');
+  const inner = catbar.querySelector('.mn-catbar-inner');
+  const catalog = document.getElementById('catalog');
+
+  inner.innerHTML = SECTIONS.map((s) => `<a href="#${s.id}" data-cat="${s.id}">${esc(s.short || s.label)}</a>`).join('');
+  const links = [...inner.querySelectorAll('a')];
+
+  const setActive = (id) => links.forEach((a) => a.classList.toggle('is-active', a.dataset.cat === id));
+  links.forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const el = document.getElementById(a.dataset.cat);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); // respeta scroll-margin-top
+    setActive(a.dataset.cat);
+    history.replaceState(null, '', '#' + a.dataset.cat);
+  }));
+
+  // Aparecer/ocultar: visible una vez que el catálogo llega cerca del header.
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      catbar.classList.toggle('is-visible', catalog.getBoundingClientRect().top < 90);
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Resaltado según la sección visible (scroll-spy).
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  SECTIONS.forEach((s) => { const el = document.getElementById(s.id); if (el) spy.observe(el); });
+}
+
 /* --- Init --- */
 document.addEventListener('DOMContentLoaded', () => {
   renderCatalog();
   wireStaticLinks();
   renderCart();
+  initMobileNav();
 
   document.getElementById('headerCartBtn').addEventListener('click', () => setCartOpen(true));
   document.getElementById('floatCartBtn').addEventListener('click', () => setCartOpen(true));

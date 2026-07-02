@@ -84,9 +84,12 @@ img { display: block; }
   font-size: 15px; color: #9B2A18; vertical-align: -1px;
 }
 
+/* Barra de categorías móvil (oculta en desktop) */
+.mn-catbar { display: none; }
+
 /* Catálogo */
 .mn-content { padding-top: 0; padding-bottom: 0; }
-.mn-section { padding: 26px 0 72px; }
+.mn-section { padding: 26px 0 72px; scroll-margin-top: 84px; }
 .mn-sec-head {
   display: flex; align-items: baseline; gap: 22px;
   padding-bottom: 26px; margin-bottom: 42px;
@@ -242,6 +245,34 @@ img { display: block; }
   .mn-hero { padding-top: 60px; padding-bottom: 52px; }
   .mn-sec-head { flex-wrap: wrap; gap: 8px; }
   .mn-sec-head h2 { white-space: normal; }
+  .mn-section { scroll-margin-top: 118px; }
+
+  /* Barra de categorías: colapsada por defecto, se despliega al scrollear */
+  .mn-catbar {
+    display: block;
+    max-height: 0; opacity: 0; overflow: hidden;
+    border-top: 1px solid transparent;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+  }
+  .mn-catbar.is-visible {
+    max-height: 60px; opacity: 1;
+    border-top-color: rgba(90,80,68,0.12);
+  }
+  .mn-catbar-inner {
+    display: flex; align-items: center; justify-content: center; gap: 22px;
+    padding-top: 11px; padding-bottom: 11px;
+  }
+  .mn-catbar a {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #A29A8D; text-decoration: none; font-weight: 400; white-space: nowrap;
+    padding-bottom: 3px; border-bottom: 1px solid transparent;
+    transition: color 0.18s ease, border-color 0.18s ease;
+  }
+  .mn-catbar a.is-active { color: #9B2A18; border-bottom-color: #9B2A18; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mn-catbar { transition: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

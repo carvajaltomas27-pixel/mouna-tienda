@@ -37,7 +37,7 @@ const SECTIONS = [
     short: 'Despensa',
     note: 'Nutrir el cuerpo con lo simple y verdadero.',
     items: [
-      { name: 'Ghee', desc: 'Manteca clarificada. Vitaminas y antioxidantes, sin grasa.', price: 15000, img: '' },
+      { name: 'Ghee', desc: 'Manteca clarificada. Vitaminas y antioxidantes, sin grasa.', price: 15000, img: 'assets/images/ghee.png', fit: 'contain' },
       { name: 'Miel Pura', desc: '100% natural.', price: 12000, img: '' },
       { name: 'Crackers', desc: 'Harina de almendras, lino, chía, sésamo y magia. Dulces y saladas.', price: 12000, img: '' },
       { name: 'Trufas', desc: 'Frutos húmedos y secos, chocolate y magia. Por tres.', price: 12000, img: '' },

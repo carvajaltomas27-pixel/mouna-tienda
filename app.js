@@ -20,7 +20,7 @@ const SECTIONS = [
     short: 'Infusiones',
     note: 'Para despertar, limpiar y acompañar el día.',
     items: [
-      { name: 'Tesoro', desc: 'Yerba mate con hierbas y magia. Energizante y desintoxicante.', price: 20000, img: 'assets/images/mouna-generic.png', fit: 'contain' },
+      { name: 'Tesoro', desc: 'Yerba mate con hierbas y magia. Energizante y desintoxicante.', price: 20000, img: 'assets/images/tesoro-foto.jpg', fit: 'cover' },
       { name: 'Pancha Kofi', desc: 'Flecha de café. Granos de Brasil y especias indias.', price: 30000, img: 'assets/images/pancha-kofi.png', fit: 'contain' },
       { name: 'Kefir', desc: 'Probiótico. Mejora la digestión y la absorción de nutrientes.', price: 15000, img: 'assets/images/kefir.png', fit: 'cover' },
       { name: 'Soham Té', desc: 'Jengibre, hinojo y magia.', price: 10000, img: '' },

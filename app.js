@@ -9,6 +9,9 @@
 const PHONE = '1167183887';
 const PHONE_DISPLAY = '11 6718 3887';
 
+// Alias de Mercado Pago que va en el mensaje del pedido.
+const MP_ALIAS = 'mouna.ceciliamassa';
+
 /* --- Catálogo (editable: precios en pesos argentinos) ---
    img: ruta a la foto del producto, o '' para usar el logo como fallback.
    fit: 'cover' para FOTOS reales (llenan el recuadro) · 'contain' para
@@ -63,6 +66,8 @@ const SECTIONS = [
 const FALLBACK_IMG = 'assets/images/mouna-generic.png';
 const WA_BASE = 'https://wa.me/549' + PHONE.replace(/\D/g, '');
 const money = (n) => '$' + n.toLocaleString('es-AR');
+// Variante para el mensaje de WhatsApp: con espacio después del $.
+const moneyWa = (n) => '$ ' + n.toLocaleString('es-AR');
 const waLink = (text) => WA_BASE + '?text=' + encodeURIComponent(text);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -70,7 +75,9 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => (
 
 /* --- Estado --- */
 const STORAGE_KEY = 'mouna_cart_v1';
+const DELIVERY_KEY = 'mouna_delivery_v1';
 let cart = loadCart();
+let delivery = loadDelivery(); // 'retiro' | 'envio' | null (sin elegir)
 let cartOpen = false;
 
 function loadCart() {
@@ -81,6 +88,17 @@ function loadCart() {
 }
 function saveCart() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); } catch (e) {}
+}
+function loadDelivery() {
+  try {
+    const v = localStorage.getItem(DELIVERY_KEY);
+    return (v === 'retiro' || v === 'envio') ? v : null;
+  } catch (e) { return null; }
+}
+function setDelivery(value) {
+  delivery = value;
+  try { localStorage.setItem(DELIVERY_KEY, value); } catch (e) {}
+  renderCart(); // el href de WhatsApp se arma en renderCart(): hay que re-dibujar
 }
 
 function addToCart(name, price) {
@@ -117,8 +135,18 @@ function cartEntries() { return Object.values(cart); }
 function cartCount() { return cartEntries().reduce((a, it) => a + it.qty, 0); }
 function cartTotal() { return cartEntries().reduce((a, it) => a + it.price * it.qty, 0); }
 function orderText() {
-  const lines = cartEntries().map((it) => '• ' + it.name + '  x' + it.qty + ' — ' + money(it.price * it.qty));
-  return 'Hola Mouna! Quiero hacer este pedido:\n\n' + lines.join('\n') + '\n\nTotal: ' + money(cartTotal());
+  const lines = [
+    'Hola Mouna.',
+    'Quiero hacer este pedido:',
+    ...cartEntries().map((it) => '•' + it.qty + ' ' + it.name + ' ' + moneyWa(it.price * it.qty)),
+    'Total ' + moneyWa(cartTotal()),
+    'Alias',
+    MP_ALIAS,
+    'Por favor enviar Comprobante.',
+  ];
+  if (delivery === 'envio') lines.push('•Envío a Domicilio', '(a cargo del Cliente)');
+  else lines.push('•Retiro en Mouna');
+  return lines.join('\n');
 }
 
 /* --- Render del catálogo (una sola vez) --- */
@@ -191,6 +219,9 @@ function renderCart() {
       <div class="mn-item-line">${money(it.price * it.qty)}</div>
     </div>`).join('');
 
+  // Sin forma de entrega elegida no se puede enviar el pedido.
+  const canSend = delivery !== null;
+
   body.innerHTML = `
     <div class="mn-items">${items}</div>
     <div class="mn-summary">
@@ -198,7 +229,12 @@ function renderCart() {
         <span class="mn-total-label">Total</span>
         <span class="mn-total-val">${money(cartTotal())}</span>
       </div>
-      <a class="mn-send" href="${waLink(orderText())}" target="_blank" rel="noopener">
+      <div class="mn-delivery" role="group" aria-label="Forma de entrega">
+        <button type="button" class="mn-dopt${delivery === 'retiro' ? ' is-active' : ''}" data-delivery="retiro">Retiro en Mouna</button>
+        <button type="button" class="mn-dopt${delivery === 'envio' ? ' is-active' : ''}" data-delivery="envio">Envío a Domicilio</button>
+      </div>
+      <p class="mn-delivery-note">${delivery === 'envio' ? 'El envío es a cargo del Cliente.' : (canSend ? '&nbsp;' : 'Elegí una forma de entrega para enviar el pedido.')}</p>
+      <a class="mn-send${canSend ? '' : ' is-disabled'}" href="${canSend ? waLink(orderText()) : '#'}"${canSend ? ' target="_blank" rel="noopener"' : ' aria-disabled="true"'}>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="#FFFFFF"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.359.101 11.945c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.652a11.882 11.882 0 005.71 1.454h.006c6.585 0 11.946-5.359 11.949-11.945a11.821 11.821 0 00-3.481-8.463"></path></svg>
         Enviar pedido
       </a>
@@ -207,6 +243,12 @@ function renderCart() {
 
   body.querySelectorAll('.mn-qbtn').forEach((btn) => {
     btn.addEventListener('click', () => changeQty(btn.dataset.name, btn.dataset.act === 'inc' ? 1 : -1));
+  });
+  body.querySelectorAll('.mn-dopt').forEach((btn) => {
+    btn.addEventListener('click', () => setDelivery(btn.dataset.delivery));
+  });
+  body.querySelector('.mn-send').addEventListener('click', (e) => {
+    if (!canSend) e.preventDefault();
   });
   body.querySelector('#clearBtn').addEventListener('click', clearCart);
 }

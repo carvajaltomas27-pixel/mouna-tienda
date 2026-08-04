@@ -216,6 +216,19 @@ img { display: block; }
 .mn-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; }
 .mn-total-label { font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: #857D71; }
 .mn-total-val { font-size: 24px; font-weight: 400; color: #9B2A18; }
+.mn-delivery { display: flex; gap: 10px; margin-bottom: 10px; }
+.mn-dopt {
+  flex: 1; padding: 12px 8px; background: transparent;
+  border: 1px solid rgba(155,42,24,0.35); border-radius: 3px; cursor: pointer;
+  font-family: inherit; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #9B2A18; transition: background 0.18s ease, color 0.18s ease;
+}
+.mn-dopt:hover { background: rgba(155,42,24,0.08); }
+.mn-dopt.is-active { background: #9B2A18; color: #F5F1EA; }
+.mn-dopt.is-active:hover { background: #9B2A18; }
+.mn-delivery-note {
+  margin: 0 0 14px; font-size: 11px; font-weight: 300; color: #A29A8D; text-align: center;
+}
 .mn-send {
   display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
   padding: 15px; background: #25D366; color: #FFFFFF; text-decoration: none;
@@ -223,6 +236,8 @@ img { display: block; }
   transition: opacity 0.18s ease;
 }
 .mn-send:hover { opacity: 0.9; }
+.mn-send.is-disabled { background: #C8C2B6; cursor: not-allowed; }
+.mn-send.is-disabled:hover { opacity: 1; }
 .mn-clear {
   width: 100%; margin-top: 12px; padding: 6px; background: transparent; border: none;
   cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 0.18em;
